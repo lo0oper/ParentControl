@@ -13,7 +13,9 @@
     "@emotion/cache": "11.11.0",
     "@emotion/react": "11.11.3",
     "@emotion/styled": "11.11.0",
+    "@mui/icons-material": "^6.1.6",
     "@mui/material": "5.15.5",
+    "LockOutlined": "link:@mui/icons-material/LockOutlined",
     "plasmo": "0.89.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"
@@ -30,6 +32,12 @@
   "manifest": {
     "host_permissions": [
       "https://*/*"
+    ],
+    "permissions": [
+      "storage",
+      "activeTab",
+      "tabs",
+      "background"
     ]
   }
 }
