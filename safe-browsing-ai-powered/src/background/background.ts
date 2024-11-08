@@ -1,4 +1,4 @@
-import { API_URLS } from "~constants/url";
+import { API_URLS } from "~constants/constant";
 
 // background.ts
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

@@ -33,3 +33,7 @@ dist/
 
 # typescript
 .tsbuildinfo
+
+
+# Backend python venv
+/safe-browsing-backend/sbvenv

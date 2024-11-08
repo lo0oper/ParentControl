@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
+import { ACTIONS } from '~constants/constant';
+
 
 function Copyright(props: any) {
   return (
@@ -37,27 +39,32 @@ export default function Login() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get("email");
-    const password = data.get("password");
-    const action = "login";
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      email: formData.get("email"),
+      password: formData.get("password")
+    };
     console.log("Sending message to BG")
-    chrome.runtime.sendMessage(
-      { action, data: { email, password } },
+    const action = ACTIONS.LOGIN;
+    chrome.runtime.sendMessage({action, data},
       (response) => {
         console.log({'response from background' : {response}})
         if (response.error) {
           setMessage(`Error: ${response.error}`);
+        // Show error notification (popup) using chrome.notifications
+          chrome.notifications.create({
+            type: 'basic',
+            iconUrl: '.cross.png',
+            title: 'Login Error',
+            message: response.error,
+            priority: 2, // Set the notification priority
+          });
         } else {
           setMessage(`"Login" successful!`);
         }
       }
     ); 
     console.log("Message sent to BG")
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
   };
 
   return (

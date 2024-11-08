@@ -12,6 +12,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useState } from 'react';
+import { ACTIONS } from '~constants/constant';
 
 function Copyright(props) {
   return (
@@ -31,13 +33,27 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignUp() {
+  const [message, setMessage] = useState<string>('');
+
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      email: formData.get("email"),
+      password: formData.get("password")
+    };
+    console.log("Sending message to BG")
+    const action = ACTIONS.SIGNUP;
+    chrome.runtime.sendMessage({action,data},
+      (response) => {
+        console.log({'response from background' : {response}})
+        if (response.error) {
+          setMessage(`Error: ${response.error}`);
+        } else {
+          setMessage(`"SignUp" successful!`);
+        }
+      })
   };
 
   return (

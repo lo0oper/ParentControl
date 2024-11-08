@@ -28,3 +28,9 @@ export const SUCCESS_MESSAGES = {
   LOGIN_SUCCESS: "Login successful!",
   SIGNUP_SUCCESS: "Sign up successful!",
 };
+
+//Actions
+export const ACTIONS = {
+  LOGIN: "login",
+  SIGNUP: "signUp",
+};

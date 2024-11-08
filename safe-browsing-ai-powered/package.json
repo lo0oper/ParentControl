@@ -31,13 +31,15 @@
   },
   "manifest": {
     "host_permissions": [
-      "https://*/*"
+      "https://*/*",
+      "http://*/*"
     ],
     "permissions": [
       "storage",
       "activeTab",
       "tabs",
-      "background"
+      "background",
+      "notifications"
     ]
   }
 }

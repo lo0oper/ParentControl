@@ -1,13 +1,13 @@
-import { API_URLS } from "~constants/url";
+import { ACTIONS, API_URLS } from "~constants/constant";
 
 // background.ts
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log({"In background for Auth with request  and sender":request.action,sender})
-    if (request.action === "signup") {
+    if (request.action === ACTIONS.SIGNUP) {
       signUp(request.data).then(response => sendResponse(response));
       return true; // Keep the message channel open for async response
-    } else if (request.action === "login") {
-        console.log("BG in login")
+    } else if (request.action === ACTIONS.LOGIN) {
+        console.debug("BG in login")
       login(request.data).then(response => sendResponse(response));
       return true;
     }else{
@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   
   async function signUp(data: { email: string; password: string }) {
     try {
-        console.log(`trying to signUp :${data}`)
+        console.log(`trying to signUp :${JSON.stringify(data)}`)
       const response = await fetch(API_URLS.SIGNUP, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   
   async function login(data: { email: string; password: string }) {
     try {
-      console.log(`trying to login :${data}`)
+      console.log(`trying to login :${JSON.stringify(data)}`)
       const response = await fetch(API_URLS.LOGIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
