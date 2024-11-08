@@ -14,7 +14,10 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import { ACTIONS } from '~constants/constant';
-
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 
 function Copyright(props: any) {
   return (
@@ -34,8 +37,8 @@ const defaultTheme = createTheme();
 
 export default function Login() {
   const [message, setMessage] = useState<string>('');
-
-
+  const [openErrorModal, setOpenErrorModal] = useState(false); // State for modal visibility
+  const [errorMessage, setErrorMessage] = useState(''); // State for error message
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,27 +47,25 @@ export default function Login() {
       email: formData.get("email"),
       password: formData.get("password")
     };
-    console.log("Sending message to BG")
+
+    console.log("Sending message to BG");
     const action = ACTIONS.LOGIN;
-    chrome.runtime.sendMessage({action, data},
-      (response) => {
-        console.log({'response from background' : {response}})
-        if (response.error) {
-          setMessage(`Error: ${response.error}`);
-        // Show error notification (popup) using chrome.notifications
-          chrome.notifications.create({
-            type: 'basic',
-            iconUrl: '.cross.png',
-            title: 'Login Error',
-            message: response.error,
-            priority: 2, // Set the notification priority
-          });
-        } else {
-          setMessage(`"Login" successful!`);
-        }
+    
+    chrome.runtime.sendMessage({ action, data }, (response) => {
+      console.log({ 'response from background': response });
+      console.log(response.sta)
+      if (response.error) {
+        setErrorMessage(response.error); // Set the error message
+        setOpenErrorModal(true); // Open the error modal
+      } else {
+        setMessage('"Login" successful!');
       }
-    ); 
-    console.log("Message sent to BG")
+    });
+    console.log("Message sent to BG");
+  };
+
+  const handleCloseModal = () => {
+    setOpenErrorModal(false); // Close the error modal
   };
 
   return (
@@ -134,6 +135,24 @@ export default function Login() {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
+
+      {/* Error Modal */}
+      <Dialog
+        open={openErrorModal}
+        onClose={handleCloseModal}
+      >
+        <DialogTitle>Error</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" color="textSecondary">
+            {errorMessage}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </ThemeProvider>
   );
 }
