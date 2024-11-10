@@ -6,7 +6,8 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
 // Authentication Endpoints
 export const API_URLS = {
   SIGNUP: `${API_BASE_URL}/signup`,
-  LOGIN: `${API_BASE_URL}/login`
+  LOGIN: `${API_BASE_URL}/login`,
+  ADD_WEBSITE : `${API_BASE_URL}/bannedWebsite`
 };
 
 // Other Constants
@@ -33,4 +34,5 @@ export const SUCCESS_MESSAGES = {
 export const ACTIONS = {
   LOGIN: "login",
   SIGNUP: "signUp",
+  ADD_WEBSITE: "GET_BLOCKED_WEBSITES"
 };

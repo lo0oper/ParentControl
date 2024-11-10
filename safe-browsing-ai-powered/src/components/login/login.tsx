@@ -47,10 +47,7 @@ export default function Login() {
       email: formData.get("email"),
       password: formData.get("password")
     };
-
-    console.log("Sending message to BG");
     const action = ACTIONS.LOGIN;
-    
     chrome.runtime.sendMessage({ action, data }, (response) => {
       console.log({ 'response from background': response });
       console.log(response.sta)
@@ -59,9 +56,9 @@ export default function Login() {
         setOpenErrorModal(true); // Open the error modal
       } else {
         setMessage('"Login" successful!');
+        chrome.tabs.create({ url: chrome.runtime.getURL('tabs/blocked_websites.html') });
       }
     });
-    console.log("Message sent to BG");
   };
 
   const handleCloseModal = () => {

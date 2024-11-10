@@ -52,6 +52,7 @@ export default function SignUp() {
           setMessage(`Error: ${response.error}`);
         } else {
           setMessage(`"SignUp" successful!`);
+          chrome.tabs.create({ url: chrome.runtime.getURL('tabs/blocked_websites.html') });
         }
       })
   };
