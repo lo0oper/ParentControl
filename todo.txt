@@ -1,0 +1,6 @@
+1. Storage api, to store email and password
+2. Accessing stored data
+3. Making call to backend to fetch data and rendering in states.
+4. Using common Storage object and other objects
+5. Define the contract of backend APIs
+6.  Include basic checks
