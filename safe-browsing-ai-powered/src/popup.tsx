@@ -13,11 +13,11 @@ function IndexPopup() {
   return (
     <div style={{
       padding: 16,
-      border: '1px solid #ccc',
-      borderRadius: '8px',
-      maxWidth: '300px',
+      maxWidth: '400px',
+      width:'398px',
       textAlign: 'center',
-      backgroundColor: '#f9f9f9'
+      height:'0px',
+      backgroundColor: 'transparent'
     }}>
       <h3>SAFE BROWSING POWERED BY AI Extension!</h3>
       <div style={{ margin: '16px 0' }}>
@@ -33,9 +33,6 @@ function IndexPopup() {
           <>
             <h4>Login to Your Account</h4>
             <Login />
-            <button onClick={toggleSignUp} style={{ marginTop: 8 }}>
-              Don't have an account? Sign Up
-            </button>
           </>
         )}
       </div>

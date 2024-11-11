@@ -71,7 +71,7 @@ export default function Login() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 3,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -130,7 +130,7 @@ export default function Login() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+        <Copyright sx={{ mt:1, mb: 1 }} />
       </Container>
 
       {/* Error Modal */}
