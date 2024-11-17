@@ -1,0 +1,14 @@
+1. What is CORS ?
+    a. why it happens
+    b. options call done pre flight
+    c. solution to this
+
+
+2. ASGI vs WSGI 
+ASGI
+A calling convention that allows web servers to forward requests to Python frameworks and applications that can handle asynchronous requests. ASGI is designed to be a superset of WSGI and to continue the innovation that WSGI enabled. ASGI is structured around three arguments:
+Scope: A dictionary that contains details about the specific connection
+Send: An asynchronous callable that allows the application to send event messages to the client
+Receive: An asynchronous callable that allows the application to receive event messages from the client
+WSGI
+A Python standard that defines compatibility between web servers, frameworks, and applications

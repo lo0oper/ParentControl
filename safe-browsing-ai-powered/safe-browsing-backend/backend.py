@@ -2,19 +2,13 @@ from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from mangum import Mangum
 from fastapi.middleware.cors import CORSMiddleware
+from middleware.middleware import RateLimitingMiddleware,LoggerMiddleware,AuthenticationMiddleware
+from log.logger import logger
 from typing import Dict
-
 import bcrypt
-import logging
 
-# Set up logging with INFO level
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-log = logging.getLogger(__name__)  # Alias 'log' for logger
-
+log = logger
 app = FastAPI()
-
-
-
 
 # Define allowed origins
 origins = [
@@ -29,6 +23,11 @@ app.add_middleware(
     allow_methods=["*"],  # Define specific methods if needed, e.g., ["GET", "POST"]
     allow_headers=["*"],  # Define specific headers if needed, e.g., ["Content-Type"]
 )
+# app.add_middleware(RateLimitingMiddleware, dispatch=dispatch)
+
+app.add_middleware(RateLimitingMiddleware)
+app.add_middleware(LoggerMiddleware)
+
 
 # In-memory user "database"
 fake_users_db: Dict[str, Dict[str, str]] = {}
@@ -48,6 +47,9 @@ class UserLogin(BaseModel):
 class BannedWebsiteRequest(BaseModel):
     user_email: str
     banned_website: str
+
+
+log.info("Starting safe-browsing-backend server....")
 
 # Utility function to hash password
 def hash_password(password: str) -> str:
@@ -110,7 +112,7 @@ def get_banned_websites(user_email: str):
 # Signup route
 @app.post("/signup")
 async def signup(user: UserSignup):
-    log.info("Signup called with ",{user.email})
+    log.info("Signup called with ${user.email}")
     if user.email in fake_users_db:
         raise HTTPException(status_code=400, detail="user with this email already exists.")
     
@@ -121,7 +123,7 @@ async def signup(user: UserSignup):
 # Login route
 @app.post("/login")
 async def login(user: UserLogin):
-    log.info("Login called with data:",user.email)
+    log.info('Login called with data: ${user.email}')
     user_record = fake_users_db.get(user.email)
     if not user_record or not verify_password(user.password, user_record["password"]):
         raise HTTPException(status_code=401, detail="Invalid email or password.")
