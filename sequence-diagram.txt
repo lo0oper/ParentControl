@@ -1,0 +1,34 @@
+title ParentalControl
+
+User->ChromeExt:Clicks on login/signUp
+ChromeExt-->User: Login/SignUp Page
+
+ChromeExt->BackEnd: AuthCreds
+BackEnd->LoginFunc:user+pass
+LoginFunc-->LoginFunc:Create JWT token
+LoginFunc->SignUp: Jwt token with success
+ChromeExt-->ChromeExt: saving Jwt token with email in session
+
+aboxright over BackEnd:  same flow for signup also
+
+alt Adding/Removing hosts from banned data
+ChromeExt->BackEnd: Add/remove host + email + JWT token
+BackEnd->MiddleWare: Verify JWT token
+else JWT token expired 
+MiddleWare-->BackEnd: return 403 , token expired response.
+else JTW token valid
+MiddleWare-->Add/subTractHosts: Add/subtract host into users list
+Add/subTractHosts->BackEnd: Return all the banned hosts.
+BackEnd->ChromeExt: Update the banned hosts list with new data and store in browser Storage.
+
+end
+
+alt Login After JWT token expiry
+aboxright over Backend: Same login flow
+end
+
+
+## HOW TO VIEW THIS SEQ DIAGRAM:
+=> Copy the context above to : https://sequencediagram.org/ and paste to view the seq diagram.
+
+

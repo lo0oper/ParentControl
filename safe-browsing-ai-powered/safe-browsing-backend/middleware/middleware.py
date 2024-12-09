@@ -4,7 +4,14 @@ from fastapi.responses import StreamingResponse, JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from datetime import datetime, timedelta
 from log.logger import logger
+import dotenv
+import jwt
+import os
 
+secret = os.getenv('secret')
+algorithm = os.getenv('algorithm')
+
+dotenv.load_dotenv()
 log = logger
 
 class RateLimitingMiddleware(BaseHTTPMiddleware):
@@ -65,7 +72,27 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         # dict to store email:token for an incoming request of a user
         self.auth_data = {}
     
-    async def authenticate(self, request, call_next):
+    async def dispatch(self, request, call_next):
         header_data = request.headers
         log.info(f'header info : ${header_data}')
+        jwt_payload = {
+            "userId":r
+        }
+        # auth_response = verify_jwt_token()
+        # if(auth_response.status_code==200):
+        #     response = await call_next(request)
+        #     return response
+        # elif (auth_response.status_code==403):
+        #     response = await logout(request)
+        #     return response
+        # elif (auth_response.status_code==401):
+        #     return {"status_code":401,"message":"unauthorized"}
+        # else :
+        #     return {"status_code":400,"message":"Authtoken incorrect"}
+
+    def getjwttoken(self,algorithm,payload,secretkey):
+        encoded = jwt.encode(payload, secretkey, algorithm=algorithm)
+        return encoded
+    
+        
 

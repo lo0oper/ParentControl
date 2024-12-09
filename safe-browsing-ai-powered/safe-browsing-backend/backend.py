@@ -5,7 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from middleware.middleware import RateLimitingMiddleware,LoggerMiddleware,AuthenticationMiddleware
 from log.logger import logger
 from typing import Dict
+
 import bcrypt
+
 
 log = logger
 app = FastAPI()
@@ -25,7 +27,8 @@ app.add_middleware(
 )
 # app.add_middleware(RateLimitingMiddleware, dispatch=dispatch)
 
-app.add_middleware(RateLimitingMiddleware)
+app.add_middleware(AuthenticationMiddleware)
+# app.add_middleware(RateLimitingMiddleware)
 app.add_middleware(LoggerMiddleware)
 
 
@@ -112,7 +115,7 @@ def get_banned_websites(user_email: str):
 # Signup route
 @app.post("/signup")
 async def signup(user: UserSignup):
-    log.info("Signup called with ${user.email}")
+    log.info("Signup called for ${user.email}")
     if user.email in fake_users_db:
         raise HTTPException(status_code=400, detail="user with this email already exists.")
     
