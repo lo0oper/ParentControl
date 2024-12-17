@@ -1,5 +1,5 @@
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request,status
 from fastapi.responses import StreamingResponse, JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from datetime import datetime, timedelta
@@ -7,6 +7,8 @@ from log.logger import logger
 import dotenv
 import jwt
 import os
+
+from auth.authentication import Authentication
 
 secret = os.getenv('secret')
 algorithm = os.getenv('algorithm')
@@ -26,7 +28,7 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request:Request, call_next):
         # Get the client's IP address
-        client_ip = request.client.host
+        client_ip = request.client.host if request.client else "Unknown_host"
        
         # Check if IP is already present in request_counts
         request_count, last_request = self.request_counts.get(client_ip, (0, datetime.min))
@@ -68,31 +70,43 @@ class LoggerMiddleware(BaseHTTPMiddleware):
 
 class AuthenticationMiddleware(BaseHTTPMiddleware):
     def __init__(self, app):
+        self.authenticator = Authentication()
         super().__init__(app)
         # dict to store email:token for an incoming request of a user
         self.auth_data = {}
     
     async def dispatch(self, request, call_next):
         header_data = request.headers
-        log.info(f'header info : ${header_data}')
-        jwt_payload = {
-            "userId":r
-        }
-        # auth_response = verify_jwt_token()
-        # if(auth_response.status_code==200):
-        #     response = await call_next(request)
-        #     return response
-        # elif (auth_response.status_code==403):
-        #     response = await logout(request)
-        #     return response
-        # elif (auth_response.status_code==401):
-        #     return {"status_code":401,"message":"unauthorized"}
-        # else :
-        #     return {"status_code":400,"message":"Authtoken incorrect"}
+        body = await request.json()
+        log.debug(f'header info : {header_data}')
+        log.debug(f'request body  : {body}')
+        jwt_token=''
+        
+         # Check if the request is for the signup or login route
+        if request.url.path in ["/signup", "/login"]:
+            return await call_next(request)  # Skip middleware for these routes
+        
+        try:
+            ## Optimise here once jwt token created we don't need to reauthenticate again
+            if self.authenticator.authenticate(body['email'],header_data.get('authorization',jwt_token)):
+                response = await call_next(request)
+                return response
+            else:
+                log.error("Authentication failed in middleware")
 
-    def getjwttoken(self,algorithm,payload,secretkey):
-        encoded = jwt.encode(payload, secretkey, algorithm=algorithm)
-        return encoded
-    
+        except HTTPException as exc:
+            # Re-raise the HTTPException caught in middleware
+            log.error(f"HTTPException caught in middleware: {exc.detail}")
+            raise exc
+        except Exception as exc:
+            # Catch any other exceptions and return a generic 500 error
+            log.error(f"Unexpected error in middleware: {str(exc)}")
+            raise HTTPException(
+                status_code=500,
+                detail="Internal server error occurred in middleware."
+            )
+            
+
+            
         
 

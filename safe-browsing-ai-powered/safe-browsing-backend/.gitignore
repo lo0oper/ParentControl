@@ -1,1 +1,4 @@
 .myenv
+.pyc*
+*cpython-312.*
+*.cpython.*
